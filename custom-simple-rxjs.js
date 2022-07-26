@@ -1,11 +1,10 @@
 /*
 - 需要实现的必要方法
 - subscribe
-- observer
 - pipe
 - operator
 - unsubscribe
-- add： 将待销毁程序进程的方法，添加到数组中
+- add： 将停止数据流的方法，添加到数组中
 */
 
 class Observable {
@@ -39,12 +38,13 @@ class Observable {
 }
 
 /*
-将 取消订阅 和 添加待销毁程序的方法，抽离到父类 Subscription 中
+将 取消订阅 和 添加停止数据流的方法，抽离到父类 Subscription 中
 */
 class Subscription {
   #teardowns = [];
 
   unsubscribe() {
+    console.log("this.#teardowns: ", this.#teardowns);
     this.#teardowns.forEach((teardown) => {
       typeof teardown === 'function' ? teardown() : teardown.unsubscribe?.();
     });
@@ -105,6 +105,7 @@ function map(fn) {
   })
 }
 
+// 实例化 Observable
 const ob = new Observable((observer) => {
   let i = 0;
   const intervalId = setInterval(() => {
@@ -124,7 +125,7 @@ const subscription = ob
   )
   .subscribe({
     next(v) {
-      console.log(v);
+      console.log('result: ', v);
     },
     error(err) {
       console.error(err);
